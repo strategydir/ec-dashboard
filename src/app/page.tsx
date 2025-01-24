@@ -1,101 +1,194 @@
-import Image from "next/image";
+"use client";
+import { useEffect, useState } from "react";
+import * as xlsx from "xlsx";
+import { ITransformedData, keyMapping } from "./ultils/keyMapping";
+import PieChart, { IPieChart } from "./components/pieChart";
+import _ from "lodash";
+import { Select, Radio, Button, Grid } from "antd";
+import { projectType } from "./ultils/enum";
+import { DownloadOutlined } from "@ant-design/icons";
+
+const { Group } = Radio;
+const { useBreakpoint } = Grid;
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [data, setData] = useState<ITransformedData[]>([]);
+  const [summaryData, setSummaryData] = useState<IPieChart>();
+  const [categoryData, setCategoryData] = useState<IPieChart>();
+  const [years, setYears] = useState<string[]>();
+  const [projectTypeList, setProjectTypeList] = useState<projectType[]>([]);
+  const [selectedYear, setSelectedYear] = useState<string>("All");
+  const [selectProjecType, setSelectedProjectType] = useState<projectType>(
+    projectType.HUMAN
+  );
+  const [total, setTotal] = useState(0);
+  const screens = useBreakpoint();
+  const isMobile = !screens.md;
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  useEffect(() => {
+    const didMount = async () => {
+      try {
+        const res = await fetch("/static/output.xlsx");
+        const blob = await res.blob();
+        const arrayBuffer = await blob.arrayBuffer();
+        const workbook = xlsx.read(arrayBuffer, { type: "array" });
+        const sheetName = workbook.SheetNames[0];
+        const sheet = workbook.Sheets[sheetName];
+        const jsonData = xlsx.utils.sheet_to_json(sheet);
+        const transformedData: ITransformedData[] = jsonData.map(
+          (item) =>
+            Object.fromEntries(
+              Object.entries(item).map(([key, value]) => [
+                keyMapping[key] || key,
+                value,
+              ])
+            ) as ITransformedData
+        );
+        const years = _.groupBy(transformedData, "year");
+        const projectTypes = _.groupBy(transformedData, "projectType");
+        const sortedYears = Object.keys(years).sort((a, b) => b - a);
+        setYears(["All", ...sortedYears]);
+        setProjectTypeList([...Object.keys(projectTypes)] as projectType[]);
+        setData(transformedData);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    didMount();
+  }, []);
+
+  useEffect(() => {
+    if (!data || !data.length) return;
+
+    const colors = ["#344CB7", "#89A6D8", "#000957"];
+
+    const selectedData =
+      selectedYear == "All"
+        ? data
+        : data.filter((item) => selectedYear === item.year.toString());
+
+    const selectedCategoryData = selectedData.filter(
+      (item) => selectProjecType === item.projectType
+    );
+
+    const sumData = _.groupBy(selectedData, "status");
+    const counts = Object.values(sumData).map((group) => group.length);
+    const labels = Object.keys(sumData);
+    setSummaryData({
+      data: counts,
+      labels,
+      colors,
+    });
+    setTotal(selectedData.length);
+
+    const catData = _.groupBy(selectedCategoryData, "status");
+    const catCounts = Object.values(catData).map((group) => group.length);
+    const catLabels = Object.keys(catData);
+    setCategoryData({
+      data: catCounts,
+      labels: catLabels,
+      colors,
+    });
+  }, [data, selectedYear, selectProjecType]);
+
+  const handleOnDownload = () => {
+    const link = document.createElement("a");
+    link.href = "/static/output.xlsx"; // File path relative to the public folder
+    link.download = "ec_dashboard.pdf"; // Suggested file name for the downloaded file
+    link.click();
+  };
+
+  return (
+    <div className="h-screen flex flex-col gap-4 p-4 bg-[#F2F2F2]">
+      <h4 className="text-xl md:text-2xl font-medium">
+        สถานะโครงร่างการวิจัยที่ยื่นขอรับรองจริยธรรมการวิจัย
+      </h4>
+      <div className="flex flex-col md:flex-row justify-between">
+        <Button
+          type="primary"
+          shape="round"
+          icon={<DownloadOutlined />}
+          size={"middle"}
+          onClick={handleOnDownload}
+        >
+          Export
+        </Button>
+        <div className="flex flex-col items-end">
+          <p className="text-sm md:text-base">
+            แหล่งที่มา: สำนักงานเลขานุการ คณะกรรมการจริยธรรมการวิจัย
+            กรมควบคุมโรค
+          </p>
+          <p className="text-sm md:text-base">
+            ข้อมูล ณ วันที่ 28 พฤศจิกายน 2567
+          </p>
+          <p className="text-sm md:text-base">
+            ความถี่ในการอัพเดต: ทุกๆ 6 เดือน
+          </p>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+      </div>
+
+      <div className="flex flex-col md:flex-row">
+        <div className="flex gap-4">
+          <h4 className="text-lg md:text-xl">ปี</h4>
+          <Select
+            className="w-64"
+            defaultValue={selectedYear}
+            onChange={(value) => setSelectedYear(value)}
+            options={years?.map((year) => ({ value: year, label: year }))}
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        </div>
+        <div className="flex flex-row flex-1 md:justify-end">
+          <h4 className="text-lg md:text-xl">
+            {`จำนวนโครงการ${
+              selectedYear === "All" ? "ทั้งหมด" : `ในปี ${selectedYear}`
+            }: ${total} โครงการ`}
+          </h4>
+        </div>
+      </div>
+      <div className="flex-1 flex flex-col md:flex-row w-full gap-4">
+        <div className="flex flex-col flex-1 rounded-2xl shadow-xl p-4 min-h-96 bg-white">
+          <div className="min-h-24 ">
+            <h3 className="text-lg md:text-xl font-medium">
+              ภาพรวมสถานะโครงการทั้งหมด
+            </h3>
+          </div>
+          <div className="flex-1 content-center w-full h-full">
+            <PieChart chartProp={summaryData} />
+          </div>
+        </div>
+        <div className="flex flex-col flex-1 rounded-2xl shadow-xl p-4 min-h-96 bg-white">
+          <div className="min-h-24 ">
+            <h3 className="text-lg md:text-xl font-medium">
+              ภาพรวมสถานะโครงการแยกตามชุดคณะกรรมการ
+            </h3>
+            <Group
+              block
+              size={isMobile ? "small" : "middle"}
+              defaultValue={selectProjecType}
+              onChange={(value) => setSelectedProjectType(value.target.value)}
+              options={projectTypeList.map((projectType) => ({
+                value: projectType,
+                label: projectType,
+              }))}
+              optionType="button"
+            />
+          </div>
+          <div className="flex-1 content-center w-full h-full">
+            <PieChart chartProp={categoryData} />
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <p className="text-sm md:text-base">
+          สำนักงานเลขานุการคณะกรรมการจริยธรรมการวิจัย กรมควบคุมโรค
+          กองนวัตกรรมและวิจัย
+        </p>
+        <p className="text-sm md:text-base">
+          อาคาร 10 ชั้น 1 ถนนติวานนท์ ต.ตลาดขวัญ อ.เมือง จ.นนทบุรี 11000
+        </p>
+        <p className="text-sm md:text-base">โทรศัพท์ 02-5903149</p>
+      </div>
     </div>
   );
 }
