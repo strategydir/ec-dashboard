@@ -28,7 +28,9 @@ export default function Home() {
   useEffect(() => {
     const didMount = async () => {
       try {
-        const res = await fetch("/static/output.xlsx");
+        const res = await fetch(
+          "https://strategydir.github.io/ec-dashboard/static/output.xlsx"
+        );
         const blob = await res.blob();
         const arrayBuffer = await blob.arrayBuffer();
         const workbook = xlsx.read(arrayBuffer, { type: "array" });
@@ -104,11 +106,19 @@ export default function Home() {
     });
   }, [data, selectedYear, selectProjecType]);
 
-  const handleOnDownload = () => {
+  const handleOnDownload = async () => {
+    const response = await fetch(
+      "https://strategydir.github.io/ec-dashboard/static/output.xlsx"
+    );
+    const blob = await response.blob(); // Fetch the file as a Blob
+
     const link = document.createElement("a");
-    link.href = "/static/output.xlsx"; // File path relative to the public folder
-    link.download = "ec_dashboard.pdf"; // Suggested file name for the downloaded file
+    const url = URL.createObjectURL(blob); // Create a local URL for the Blob
+    link.href = url;
+    link.download = "ec_dashboard.xlsx"; // New filename
     link.click();
+
+    URL.revokeObjectURL(url); // Clean up the URL
   };
 
   return (
