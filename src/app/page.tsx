@@ -35,18 +35,31 @@ export default function Home() {
         const sheetName = workbook.SheetNames[0];
         const sheet = workbook.Sheets[sheetName];
         const jsonData = xlsx.utils.sheet_to_json(sheet);
-        const transformedData: ITransformedData[] = jsonData.map(
-          (item) =>
-            Object.fromEntries(
-              Object.entries(item).map(([key, value]) => [
-                keyMapping[key] || key,
-                value,
-              ])
-            ) as ITransformedData
-        );
+        console.log("jsonData", jsonData);
+        const transformedData: ITransformedData[] = jsonData.map((item) => {
+          const data = Object.fromEntries(
+            Object.entries(item as Record<string, unknown>).map(
+              ([key, value]) => {
+                const newKey =
+                  keyMapping[key as keyof typeof keyMapping] || key;
+                return [newKey, value];
+              }
+            )
+          );
+          return {
+            id: data.id,
+            projectType: data.projectType,
+            processStatus: data.processStatus,
+            considerType: data.considerType,
+            year: data.year,
+            status: data.status,
+          } as ITransformedData;
+        });
         const years = _.groupBy(transformedData, "year");
         const projectTypes = _.groupBy(transformedData, "projectType");
-        const sortedYears = Object.keys(years).sort((a, b) => b - a);
+        const sortedYears = Object.keys(years).sort(
+          (a, b) => parseInt(b, 10) - parseInt(a, 10)
+        );
         setYears(["All", ...sortedYears]);
         setProjectTypeList([...Object.keys(projectTypes)] as projectType[]);
         setData(transformedData);

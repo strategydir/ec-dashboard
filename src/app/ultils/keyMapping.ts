@@ -5,7 +5,7 @@ export const keyMapping = {
   ปี: "year",
   รหัสโครงการ: "id",
   สถานะ: "status",
-};
+} as const;
 
 export interface ITransformedData {
   id: number;

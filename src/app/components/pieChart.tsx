@@ -126,9 +126,18 @@ const PieChart = ({ chartProp }: IProps) => {
               };
             },
             formatter: (value, context) => {
-              const total = context.dataset.data.reduce((a, b) => a + b, 0);
-              const percentage = ((value / total) * 100).toFixed(1);
-              const label = context.chart.data.labels[context.dataIndex];
+              const total = context.dataset.data.reduce((a, b) => {
+                const numA = typeof a === "number" ? a : 0;
+                const numB = typeof b === "number" ? b : 0;
+                return numA + numB;
+              }, 0);
+              const percentage =
+                total && typeof total === "number" && total !== 0
+                  ? ((value / total) * 100).toFixed(1)
+                  : "0.0";
+              const label =
+                context.chart.data.labels?.[context.dataIndex] ||
+                "ไม่ทราบจำนวน";
               return `${label}\n ${value} โครงการ\n   (${percentage} %)`;
             },
           },
