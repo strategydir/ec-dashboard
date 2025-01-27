@@ -10,10 +10,8 @@ import {
   TooltipItem,
 } from "chart.js";
 import { useEffect, useState } from "react";
-import { Empty, Grid } from "antd";
+import { Empty } from "antd";
 import ChartDataLabels from "chartjs-plugin-datalabels";
-
-const { useBreakpoint } = Grid;
 
 ChartJS.register(ArcElement, Tooltip, Legend, ChartDataLabels);
 
@@ -32,8 +30,6 @@ const PieChart = ({ chartProp }: IProps) => {
     labels: [],
     datasets: [],
   });
-  const screens = useBreakpoint();
-  const isMobile = !screens.md;
 
   useEffect(() => {
     if (!chartProp) return;
