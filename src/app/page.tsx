@@ -201,7 +201,7 @@ export default function Home() {
         </div>
       </div>
 
-      <div>
+      <div className="bg-[#F2F2F2]">
         <p className="text-sm md:text-base">
           สำนักงานเลขานุการคณะกรรมการจริยธรรมการวิจัย กรมควบคุมโรค
           กองนวัตกรรมและวิจัย
