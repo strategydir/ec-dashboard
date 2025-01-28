@@ -37,7 +37,6 @@ export default function Home() {
         const sheetName = workbook.SheetNames[0];
         const sheet = workbook.Sheets[sheetName];
         const jsonData = xlsx.utils.sheet_to_json(sheet);
-        console.log("jsonData", jsonData);
         const transformedData: ITransformedData[] = jsonData.map((item) => {
           const data = Object.fromEntries(
             Object.entries(item as Record<string, unknown>).map(

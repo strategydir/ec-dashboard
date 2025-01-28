@@ -135,10 +135,11 @@ const PieChart = ({ chartProp }: IProps) => {
                 total && typeof total === "number" && total !== 0
                   ? ((value / total) * 100).toFixed(1)
                   : "0.0";
-              const label =
-                context.chart.data.labels?.[context.dataIndex] ||
-                "ไม่ทราบจำนวน";
-              return `${label}\n ${value} โครงการ\n   (${percentage} %)`;
+              // const label =
+              //   context.chart.data.labels?.[context.dataIndex] ||
+              //   "ไม่ทราบ";
+              // return `${label}\n ${value} โครงการ\n   (${percentage} %)`;
+              return `${value} โครงการ\n   (${percentage} %)`;
             },
           },
         },
