@@ -1,9 +1,14 @@
-<!doctype html><html lang="th"><head><meta charset="utf-8"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><title>สถานะโครงการวิจัย 2568–2570</title><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>สถานะโครงการวิจัย 2568–2570</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
 <style>
-/* Layout: blue hero with year switch → donut + status tiles → three-column status board of project codes */
+/* Layout: blue hero with year switch → donut + status tiles */
 :root{
   --bg:#f1f5fc; --surface:#ffffff; --line:#dbe4f2; --fg:#0f1e36; --muted:#5a6a84;
   --accent:#1d4ed8; --hero:#123a8c; --hero-2:#1a4fb8; --track:#e6edf8;
@@ -27,6 +32,8 @@
   --shadow:0 1px 2px rgba(0,0,0,.3); color-scheme:dark}
 
 *{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0}
 body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.6;padding-inline:20px;padding-block:24px 48px}
 .wrap{max-width:1080px;margin:0 auto;display:grid;gap:22px}
 h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0}
@@ -75,19 +82,6 @@ button:focus-visible{outline:2px solid #fff;outline-offset:2px}
 .legend li{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;font-size:.92rem;padding:6px 10px;border-radius:10px;background:var(--sb)}
 .legend i{width:12px;height:12px;border-radius:4px;background:var(--sc)}
 .legend b{font:600 .85rem var(--f-mono);color:var(--sc);font-variant-numeric:tabular-nums}
-/* Board */
-.board-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px;padding-inline:4px}
-.board-head h2{font-size:1.2rem;font-weight:600}
-.board-head span{color:var(--muted);font-size:.9rem}
-.board{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;align-items:start}
-.col{overflow:hidden}
-.col-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 18px;background:var(--sb);border-bottom:1px solid var(--line)}
-.col-head h3{font-size:1rem;font-weight:600;color:var(--sc);display:flex;align-items:center;gap:8px}
-.col-head h3::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--sc)}
-.col-head b{font:600 .85rem var(--f-mono);color:var(--sc);background:var(--surface);border-radius:99px;padding:1px 10px}
-.codes{display:flex;flex-wrap:wrap;gap:8px;padding:16px 18px 18px}
-.code{font:600 .92rem var(--f-mono);padding:5px 11px;border-radius:8px;border:1px solid var(--line);background:var(--bg);letter-spacing:.02em;font-variant-numeric:tabular-nums}
-.none{color:var(--muted);font-size:.9rem;padding:4px 0}
 .s-ok{--sc:var(--ok);--sb:var(--ok-soft)}
 .s-run{--sc:var(--run);--sb:var(--run-soft)}
 .s-bad{--sc:var(--bad);--sb:var(--bad-soft)}
@@ -95,10 +89,12 @@ button:focus-visible{outline:2px solid #fff;outline-offset:2px}
 footer{color:var(--muted);font-size:.85rem;text-align:center;display:grid;gap:2px;padding-top:6px}
 
 @media (max-width:860px){.overview{grid-template-columns:1fr}.donut-card{grid-template-columns:auto;}}
-@media (max-width:640px){.tiles,.board{grid-template-columns:1fr}.tile{grid-template-columns:1fr auto;align-items:center}.tile .meter,.tile .pct{grid-column:1/-1}}
+@media (max-width:640px){.tiles{grid-template-columns:1fr}.tile{grid-template-columns:1fr auto;align-items:center}.tile .meter,.tile .pct{grid-column:1/-1}}
 @media (max-width:420px){.seg button{padding:8px 14px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
+</head>
+<body>
 
 <div class="wrap">
   <header>
@@ -123,16 +119,16 @@ footer{color:var(--muted);font-size:.85rem;text-align:center;display:grid;gap:2p
   </section>
 
   <footer>
-    <span>ข้อมูลจากชีต “ปี_ฐานข้อมูล” ปีงบประมาณ 2568, 2569 และ 2570 ณ วันที่ 8 ตุลาคม 2569</span>
+    <span>ข้อมูลจากชีต “ปี_ฐานข้อมูล” ปีงบประมาณ 2568, 2569 และ 2570 ณ วันที่ 24 พฤศจิกายน 2569</span>
     <span>หากมีข้อสงสัยเกี่ยวกับสถานะโครงการ กรุณาติดต่อเจ้าหน้าที่ผู้รับผิดชอบโครงการ</span>
   </footer>
 </div>
 
 <script>
 const RAW={
-"2568":"68001A,68002R,68003R,68004X,68005X,68006X,68007R,68008R,68009R,68010A,68011A,68012R,68013R,68014A,68015A,68016X,68017R,68018A,68019A,68020A,68021A,68022R,68023A,68024A,68025A,68026R",
-"2569":"69001X,69002R,69003X,69004R,69005R,69006A,69007X,69008R,69009R,69010X,69011R,69012A,69013X,69014R,69015R,69016R,69017R,69018R,69019R,69020R",
-"2570":"70001R"};
+"2568":"68001A,68002R,68003R,68004X,68005X,68006X,68007R,68008R,68009A,68010A,68011A,68012R,68013R,68014A,68015A,68016X,68017R,68018A,68019A,68020A,68021A,68022R,68023A,68024A,68025A,68026R",
+"2569":"69001X,69002R,69003X,69004R,69005A,69006A,69007X,69008X,69009A,69010X,69011R,69012A,69013X,69014R,69015R,69016R,69017R,69018X,69019X,69020A",
+"2570":"70001R,70002R,70003A,70004(1)R,70004(2)R"};
 const MAP={A:"Approve",R:"Active",X:"Reject"};
 const ICONS={
   ok:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
@@ -181,5 +177,5 @@ function render(){
 $("yearSeg").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;year=b.dataset.y;try{localStorage.setItem("rs-year",year)}catch(_){}render()});
 render();
 </script>
-
-</body></html>
+</body>
+</html>
